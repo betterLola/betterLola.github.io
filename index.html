@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>怨气宠物 - 打工人专属情绪桌面宠 | F1一键发疯</title>
+    <meta name="description" content="一款让负面情绪'看得见、可宣泄、能变现'的桌面宠物应用。全程离线运行，隐私安全，F1全局热键一键吐槽。">
+    <meta property="og:title" content="怨气宠物 - 打工人专属情绪桌面宠">
+    <meta property="og:description" content="F1一键发疯，让职场怨气可视化！全程离线运行，隐私完全本地闭环。">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dark-bg: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --accent-blue: #667eea;
+            --accent-purple: #764ba2;
+            --accent-pink: #f5576c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            overflow: hidden;
+        }
+        .bg-animation::before {
+            content: '';
+            position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+            background: radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(245, 87, 108, 0.08) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.85);
+            border-bottom: 1px solid var(--card-border);
+        }
+        nav.scrolled { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem; font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; text-decoration: none; letter-spacing: -0.5px;
+        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.95rem;
+            transition: color 0.3s ease; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+            background: var(--primary-gradient); transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a:hover::after { width: 100%; }
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 8rem 2rem 4rem; position: relative;
+        }
+        .hero-content { max-width: 900px; text-align: center; z-index: 1; }
+        .badge {
+            display: inline-block; padding: 0.5rem 1.2rem;
+            background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 50px;
+            font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 2rem;
+            backdrop-filter: blur(10px); animation: fadeInUp 0.8s ease-out;
+        }
+        .badge span { color: var(--accent-pink); font-weight: 600; }
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.15;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.35rem); color: var(--text-secondary);
+            margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .cta-group {
+            display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.75rem;
+            padding: 1.2rem 2.8rem; border-radius: 60px;
+            font-size: 1.15rem; font-weight: 600; text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; border: none;
+        }
+        .btn-primary {
+            background: var(--primary-gradient); color: white;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4); transform: scale(1.05);
+        }
+        .btn-primary:hover { transform: scale(1.08) translateY(-2px); box-shadow: 0 12px 48px rgba(102, 126, 234, 0.5); }
+        .btn-secondary {
+            background: var(--card-bg); color: var(--text-primary);
+            border: 1px solid var(--card-border); backdrop-filter: blur(10px);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-purple); transform: translateY(-2px); }
+        .btn svg { width: 22px; height: 22px; }
+        .scroll-indicator { position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; }
+        .scroll-indicator svg { width: 28px; height: 28px; stroke: var(--text-muted); }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-12px); }
+            60% { transform: translateX(-50%) translateY(-6px); }
+        }
+        section { padding: 7rem 2rem; max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .section-header p { color: var(--text-secondary); font-size: 1.15rem; max-width: 650px; margin: 0 auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .feature-card {
+            background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px;
+            padding: 2.5rem; backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--primary-gradient); opacity: 0; transition: opacity 0.4s ease;
+        }
+        .feature-card:hover { transform: translateY(-8px); border-color: rgba(102, 126, 234, 0.3); box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15); }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon {
+            width: 64px; height: 64px; border-radius: 18px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 2rem;
+        }
+        .feature-card h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.9rem; color: var(--text-primary); }
+        .feature-card p { color: var(--text-secondary); line-height: 1.7; font-size: 1rem; }
+        .showcase {
+            background: linear-gradient(180deg, transparent 0%, rgba(102, 126, 234, 0.03) 50%, transparent 100%);
+            border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
+        }
+        .showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
+        .showcase-item {
+            text-align: center; padding: 2.5rem 2rem; background: var(--card-bg);
+            border: 1px solid var(--card-border); border-radius: 24px;
+            backdrop-filter: blur(20px); transition: all 0.4s ease;
+        }
+        .showcase-item:hover { transform: translateY(-6px); background: rgba(255, 255, 255, 0.07); }
+        .showcase-icon { font-size: 3.5rem; margin-bottom: 1.5rem; display: block; }
+        .showcase-item h3 { font-size: 1.25rem; margin-bottom: 0.8rem; color: var(--text-primary); }
+        .showcase-item p { color: var(--text-secondary); font-size: 0.95rem; }
+        .download-section { text-align: center; padding: 8rem 2rem; }
+        .download-box {
+            max-width: 800px; margin: 0 auto; background: var(--card-bg);
+            border: 1px solid var(--card-border); border-radius: 32px;
+            padding: 4rem 3rem; backdrop-filter: blur(20px); position: relative; overflow: hidden;
+        }
+        .download-box::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .download-box h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; position: relative; }
+        .version-info {
+            display: inline-block; padding: 0.5rem 1.2rem; background: rgba(102, 126, 234, 0.15);
+            border-radius: 50px; font-size: 0.9rem; color: var(--accent-blue);
+            margin-bottom: 2rem; position: relative;
+        }
+        .platform-badges { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap; position: relative; }
+        .platform-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.4rem;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
+            border-radius: 12px; font-size: 0.9rem; color: var(--text-secondary);
+        }
+        .platform-badge svg { width: 20px; height: 20px; }
+        .download-btn-large {
+            display: inline-flex; align-items: center; gap: 1rem;
+            padding: 1.5rem 4rem; background: var(--primary-gradient); color: white;
+            border: none; border-radius: 70px; font-size: 1.35rem; font-weight: 700;
+            cursor: pointer; text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.45); position: relative; margin-bottom: 1.5rem;
+        }
+        .download-btn-large:hover { transform: scale(1.06) translateY(-3px); box-shadow: 0 16px 56px rgba(102, 126, 234, 0.55); }
+        .download-btn-large svg { width: 26px; height: 26px; }
+        .file-info { color: var(--text-muted); font-size: 0.9rem; position: relative; }
+        .notice {
+            margin-top: 2rem; padding: 1.5rem; background: rgba(245, 87, 108, 0.08);
+            border: 1px solid rgba(245, 87, 108, 0.2); border-radius: 16px; text-align: left; position: relative;
+        }
+        .notice h4 { color: var(--accent-pink); font-size: 1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+        .notice ul { list-style: none; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8; }
+        .notice li::before { content: '•'; color: var(--accent-pink); margin-right: 0.5rem; }
+        .faq-list { max-width: 850px; margin: 3rem auto 0; text-align: left; position: relative; }
+        .faq-item { border-bottom: 1px solid var(--card-border); padding: 1.5rem 0; }
+        .faq-question {
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; color: var(--text-primary); font-weight: 600; font-size: 1.05rem;
+            transition: color 0.3s ease;
+        }
+        .faq-question:hover { color: var(--accent-blue); }
+        .faq-question svg { width: 20px; height: 20px; transition: transform 0.3s ease; }
+        .faq-item.active .faq-question svg { transform: rotate(180deg); }
+        .faq-answer {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease;
+            color: var(--text-secondary); line-height: 1.7;
+        }
+        .faq-item.active .faq-answer { max-height: 300px; padding-top: 1rem; }
+        footer { border-top: 1px solid var(--card-border); padding: 4rem 2rem 2rem; text-align: center; background: rgba(0, 0, 0, 0.3); }
+        .footer-content { max-width: 1200px; margin: 0 auto; }
+        .footer-links { display: flex; justify-content: center; gap: 2.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--accent-blue); }
+        .footer-copy { color: var(--text-muted); font-size: 0.9rem; }
+        .footer-quote {
+            margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);
+            color: var(--text-muted); font-style: italic; font-size: 1rem;
+        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.7s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) {
+            .nav-container { padding: 1rem; }
+            .nav-links { display: none; }
+            .hero { padding: 7rem 1.5rem 3rem; }
+            h1 { font-size: 2.2rem; }
+            .btn { padding: 1rem 2rem; font-size: 1rem; }
+            section { padding: 4rem 1.5rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .download-box { padding: 2.5rem 1.5rem; }
+            .download-btn-large { padding: 1.2rem 2.5rem; font-size: 1.1rem; width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">🐾 怨气宠物</a>
+            <ul class="nav-links">
+                <li><a href="#features">核心功能</a></li>
+                <li><a href="#showcase">使用场景</a></li>
+                <li><a href="#download">立即下载</a></li>
+                <li><a href="#faq">常见问题</a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge">🎯 <span>SOLO大赛参赛作品</span> · TRAE社区官方推荐</div>
+            <h1>与其内耗自己<br>不如发疯给别人看</h1>
+            <p class="hero-subtitle">
+                一款让负面情绪<strong style="color:var(--accent-pink)">看得见、可宣泄、能可视化</strong>的桌面宠物应用<br>
+                F1一键吐槽 · 全程离线运行 · 隐私安全本地闭环
+            </p>
+            <div class="cta-group">
+                <a href="#download" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    立即体验
+                </a>
+                <a href="#features" class="btn btn-secondary">了解更多 ↓</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+        </div>
+    </section>
+    <section id="features">
+        <div class="section-header fade-in">
+            <h2>为什么选择「怨气宠物」？</h2>
+            <p>专为打工人设计的情绪管理工具，让每一次吐槽都有价值</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">⌨️</div>
+                <h3>F1 全局热键一键吐槽</h3>
+                <p>无论你在做什么，按F1即可唤起吐槽窗口。支持自定义热键（F1-F12），不打扰工作流，随时树洞宣泄。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🧠</div>
+                <h3>智能 NLP 情绪分析</h3>
+                <p>基于 jieba 分词 + 情感词典的轻量级语义分析引擎，实时计算怨气指数，精准捕捉负面情绪关键词。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🔒</div>
+                <h3>全程离线 · 隐私安全</h3>
+                <p>所有数据本地存储（SQLite），无需联网，无需注册登录。你的情绪秘密，只有你和宠物知道。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🎨</div>
+                <h3>实时视觉反馈系统</h3>
+                <p>怨气值越高，宠物越大、颜色越深。从可爱粉红→暴躁紫红→黑化暗红，情绪变化一目了然。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">💬</div>
+                <h3>AI 共情安慰语生成</h3>
+                <p>根据吐槽内容智能匹配安慰话术，识别加班/PUA/不公平等场景，提供针对性共情回复。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">📸</div>
+                <h3>智能合影 & 发疯文学</h3>
+                <p>一键截图合影，根据今日心情自动生成发疯文学/阴阳怪气文案，支持复制分享到社交平台。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🛡️</div>
+                <h3>心理危机干预检测</h3>
+                <p>基于词性分析（POS Tagging）的智能危机检测系统，识别真实自杀倾向 vs 口头禅误报，必要时提供心理热线。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">📊</div>
+                <h3>情绪数据面板</h3>
+                <p>查看今日吐槽次数、平均/最高怨气值、降温次数统计，直观了解自己的情绪状态和压力来源。</p>
+            </div>
+        </div>
+    </section>
+    <section id="showcase" class="showcase">
+        <div class="section-header fade-in">
+            <h2>场景化呈现</h2>
+            <p>每一个打工人，都值得拥有一个安全的情绪出口</p>
+        </div>
+        <div class="showcase-grid">
+            <div class="showcase-item fade-in"><span class="showcase-icon">😤</span><h3>被老板 PUA 了？</h3><p>F1 召唤宠物 → 吐槽 → 宠物变红变大 → 获得AI共情安慰 → 怨气值可视化释放</p></div>
+            <div class="showcase-item fade-in"><span class="showcase-icon">😫</span><h3>加班到深夜？</h3><p>"今天累死了" → 智能识别为正常抱怨（非危机）→ 温暖安慰语 + 建议休息提醒</p></div>
+            <div class="showcase-item fade-in"><span class="showcase-icon">💔</span><h3>情绪低谷期？</h3><p>输入真实消极内容 → 危机检测触发 → 心理咨询热线推荐 + 专业疏导引导</p></div>
+            <div class="showcase-item fade-in"><span class="showcase-icon">✨</span><h3>想发疯朋友圈？</h3><p>点击合影按钮 → 自动生成阴阳怪气文案 → 一键复制 → 分享到社交平台（保护隐私）</p></div>
+            <div class="showcase-item fade-in"><span class="showcase-icon">🌡️</span><h3>需要冷静一下？</h3><p>点击冰块按钮 → 强制降温清零 → 记录冷静次数 → 可视化自我调节能力</p></div>
+            <div class="showcase-item fade-in"><span class="showcase-icon">📈</span><h3>想了解自己？</h3><p>打开设置 → 查看情绪统计面板 → 发现压力模式 → 提前预防情绪崩溃</p></div>
+        </div>
+    </section>
+    <section id="download" class="download-section">
+        <div class="download-box fade-in">
+            <h2>立即下载体验</h2>
+            <div class="version-info">Version 1.0 · Windows 10/11 专用</div>
+            <div class="platform-badges">
+                <div class="platform-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.574h9.75v9.451L0 20.676m10.949-9.605H24V24l-12.9-1.801"/></svg>Windows 10/11</div>
+                <div class="platform-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>64-bit 系统</div>
+                <div class="platform-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免费使用</div>
+            </div>
+            <a href="./怨气宠物.zip" class="download-btn-large" download="怨气宠物_v1.0_Windows.zip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                下载安装包 (约 62 MB)
+            </a>
+            <p class="file-info">解压后双击 exe 即可运行 · 无需安装 Python 或任何依赖</p>
+            <p class="file-info" style="margin-top:0.8rem;">
+                国内网盘直链：<a href="https://pan.baidu.com/s/1ijy-HXZt9kobRFPFxoEblQ" target="_blank" style="color:var(--accent-blue);text-decoration:underline;">百度网盘下载</a>（提取码: t7d4）
+            </p>
+            <div class="notice">
+                <h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"/></svg>安装注意事项</h4>
+                <ul>
+                    <li><strong>目前仅支持 Windows 10/11 (64位)</strong>，Mac 版本开发中，敬请期待</li>
+                    <li>解压后请保持文件夹完整（包含 <code>_internal</code> 目录），不要单独移动 exe 文件</li>
+                    <li>首次运行如遇 Windows Defender / 安全软件拦截，请：<br>① 右键 exe → 属性 → 勾选"解除锁定"<br>② 或将整个文件夹添加到杀毒软件排除列表</li>
+                    <li>建议放置路径避免特殊字符（中文路径可以，但不要有空格或符号）</li>
+                    <li>多台电脑可用同一压缩包，无激活限制</li>
+                    <li>程序同目录会生成 SQLite 数据库记录吐槽历史，可放心删除重置</li>
+                </ul>
+            </div>
+            <div class="faq-list">
+                <h3 style="color:var(--text-primary);margin-bottom:1.5rem;font-size:1.3rem;">常见问题</h3>
+                <div class="faq-item">
+                    <div class="faq-question">被安全软件拦截怎么办？<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+                    <div class="faq-answer">这是正常现象，因为程序使用了全局热键监听（pynput库）。解决方案：<br>① 右键exe → 属性 → 勾选最下方"解除锁定" → 确定<br>② Windows安全中心 → 病毒和威胁防护 → 管理设置 → 排除项 → 添加该文件夹<br>③ 如果是360/腾讯管家：隔离区找到文件 → 恢复 → 添加信任</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">运行报错 "找不到DLL" 怎么办？<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+                    <div class="faq-answer">请确保目录结构完整：怨气宠物文件夹下必须同时存在 <strong>怨气宠物.exe</strong> 和 <strong>_internal</strong> 文件夹（同一级目录），不要删除或移动 _internal 目录。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">会自动更新吗？数据保存在哪里？<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+                    <div class="faq-answer">不会自动更新，这是独立版本。如需最新版请关注<a href="https://forum.trae.cn/t/topic/13566" target="_blank" style="color:var(--accent-blue)">TRAE论坛帖子</a>或联系开发者(QQ: 387706580)。数据保存在程序同目录下的 <code>grudge_pet.db</code> SQLite数据库文件中。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">有 Mac 版本吗？<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+                    <div class="faq-answer">目前仅提供 Windows 版本，Mac 版正在开发中。如急需 Mac 版可直接联系开发者反馈需求。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://forum.trae.cn/t/topic/13566" target="_blank">📝 项目详情 (TRAE论坛)</a>
+                <a href="mailto:QQ387706580@qq.com">📧 联系开发者</a>
+                <a href="#faq">❓ 常见问题</a>
+                <a href="#download">⬇️ 重新下载</a>
+            </div>
+            <p class="footer-copy">© 2025 怨气宠物 (Grudge Pet) · 基于 Python + Tkinter 开发<br>本项目为 SOLO 大赛参赛作品，仅供学习交流使用</p>
+            <p class="footer-quote">"与其内耗自己，不如发疯给别人看" —— 怨气宠物与你共勉 ❤️</p>
+        </div>
+    </footer>
+    <script>
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); });
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => { const t = document.querySelector(a.getAttribute('href')); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); });
+        });
+        const observer = new IntersectionObserver(e => e.forEach(el => el.isIntersecting && el.target.classList.add('visible')), {threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                const item = q.parentElement, was = item.classList.contains('active');
+                document.querySelectorAll('.faq-item.active').forEach(a => a.classList.remove('active'));
+                item.classList.toggle('active', !was);
+            });
+        });
+    </script>
+</body>
+</html>
