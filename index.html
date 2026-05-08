@@ -262,6 +262,7 @@
         <div class="nav-container">
             <a href="#" class="logo">🐾 怨气宠物</a>
             <ul class="nav-links">
+                <li><a href="#demo">✨ 在线体验</a></li>
                 <li><a href="#features">核心功能</a></li>
                 <li><a href="#showcase">使用场景</a></li>
                 <li><a href="#download">立即下载</a></li>
@@ -278,11 +279,11 @@
                 F1一键吐槽 · 全程离线运行 · 隐私安全本地闭环
             </p>
             <div class="cta-group">
-                <a href="#download" class="btn btn-primary">
+                <a href="#demo" class="btn btn-primary">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                    立即体验
+                    ✨ 立即在线体验
                 </a>
-                <a href="#features" class="btn btn-secondary">了解更多 ↓</a>
+                <a href="#download" class="btn btn-secondary">下载桌面版 ↓</a>
             </div>
         </div>
         <div class="scroll-indicator">
@@ -351,18 +352,363 @@
             <div class="showcase-item fade-in"><span class="showcase-icon">📈</span><h3>想了解自己？</h3><p>打开设置 → 查看情绪统计面板 → 发现压力模式 → 提前预防情绪崩溃</p></div>
         </div>
     </section>
+    <section id="demo" class="demo-section">
+        <div class="section-header fade-in">
+            <h2>✨ 在线体验 - 感受怨气宠物的魔力</h2>
+            <p>输入你的吐槽，看看宠物如何回应！完全模拟真实应用体验</p>
+        </div>
+
+        <div class="demo-container fade-in">
+            <!-- 宠物显示区 -->
+            <div class="pet-display">
+                <div class="pet-wrapper" id="petWrapper">
+                    <div class="pet-emoji" id="petEmoji">🐾</div>
+                    <div class="pet-glow" id="petGlow"></div>
+                </div>
+                <div class="grudge-bar-container">
+                    <div class="grudge-label">怨气值: <span id="grudgeValue">0</span>%</div>
+                    <div class="grudge-bar">
+                        <div class="grudge-fill" id="grudgeFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 交互区 -->
+            <div class="interaction-area">
+                <!-- 回复气泡 -->
+                <div class="response-bubble" id="responseBubble" style="display:none;">
+                    <div class="bubble-content" id="responseText"></div>
+                </div>
+
+                <!-- 快捷建议 -->
+                <div class="quick-suggestions">
+                    <button class="suggestion-btn" onclick="submitDemo('😫 加班到深夜，老板还不让走')">😫 加班到深夜</button>
+                    <button class="suggestion-btn" onclick="submitDemo('😤 老板又在画饼了，这次说年底分红')">😤 老板画大饼</button>
+                    <button class="suggestion-btn" onclick="submitDemo('😢 同事甩锅给我，背黑锅了')">😢 同事甩锅</button>
+                    <button class="suggestion-btn" onclick="submitDemo('🤯 需求又变了，第三次了！！！')">🤯 需求变更</button>
+                </div>
+
+                <!-- 输入框 -->
+                <div class="input-group">
+                    <textarea
+                        id="demoInput"
+                        placeholder="输入你的吐槽... (试试按 Enter 发送)"
+                        rows="3"
+                        maxlength="200"
+                    ></textarea>
+                    <button class="send-btn" onclick="submitFromInput()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        发送
+                    </button>
+                </div>
+
+                <!-- 状态提示 -->
+                <div class="status-hint" id="statusHint"></div>
+            </div>
+        </div>
+
+        <!-- 转化引导 -->
+        <div class="conversion-cta" id="conversionCta" style="display:none;">
+            <div class="cta-badge">🎉 觉得不错？</div>
+            <p class="cta-text">下载完整版体验更多功能：</p>
+            <ul class="cta-features">
+                <li>⌨️ <strong>F1 全局热键</strong> - 随时唤起，不打扰工作</li>
+                <li>🖥️ <strong>桌面常驻宠物</strong> - 实时视觉反馈</li>
+                <li>📊 <strong>情绪数据统计</strong> - 了解自己的压力模式</li>
+                <li>💼 <strong>28种职业专属话术</strong> - 更懂你的安慰</li>
+                <li>📝 <strong>快捷笔记功能</strong> - 记录情绪日记</li>
+            </ul>
+            <a href="#download" class="btn btn-primary cta-download-btn">
+                ⬇️ 立即下载完整版 (约 51 MB)
+            </a>
+        </div>
+    </section>
+    <style>
+        .demo-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(245, 87, 108, 0.03) 50%, transparent 100%);
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+            padding: 7rem 2rem;
+        }
+        .demo-container {
+            max-width: 900px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 32px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+        }
+        .pet-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .pet-wrapper {
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .pet-wrapper:hover {
+            transform: scale(1.05);
+        }
+        .pet-wrapper.shake {
+            animation: petShake 0.5s ease-in-out;
+        }
+        @keyframes petShake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+        .pet-emoji {
+            font-size: 6rem;
+            transition: all 0.5s ease;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+        }
+        .pet-glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+        .grudge-bar-container {
+            width: 100%;
+            text-align: center;
+        }
+        .grudge-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .grudge-label span {
+            color: var(--accent-pink);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .grudge-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .grudge-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CAF50 0%, #FFC107 40%, #FF5722 70%, #B71C1C 100%);
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .grudge-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .interaction-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .response-bubble {
+            background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            animation: bubbleFadeIn 0.5s ease-out;
+        }
+        .response-bubble::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 30px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%);
+            border-left: 1px solid rgba(102,126,234,0.3);
+            border-top: 1px solid rgba(102,126,234,0.3);
+            transform: rotate(45deg);
+        }
+        @keyframes bubbleFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bubble-content {
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        .quick-suggestions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+        .suggestion-btn {
+            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        .suggestion-btn:hover {
+            background: rgba(102,126,234,0.15);
+            border-color: rgba(102,126,234,0.4);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        .input-group textarea {
+            flex: 1;
+            padding: 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: none;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        .input-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+        .send-btn {
+            padding: 1rem 1.5rem;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        }
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        .status-hint {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            min-height: 1.5rem;
+            font-style: italic;
+        }
+        .conversion-cta {
+            max-width: 800px;
+            margin: 4rem auto 0;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(245,87,108,0.1) 100%);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 24px;
+            text-align: center;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .cta-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--accent-pink);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .cta-text {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .cta-features {
+            list-style: none;
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+        .cta-features li {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            padding: 0.5rem;
+        }
+        .cta-download-btn {
+            display: inline-flex;
+            margin-top: 1rem;
+        }
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+                padding: 2rem 1.5rem;
+            }
+            .quick-suggestions {
+                grid-template-columns: 1fr;
+            }
+            .input-group {
+                flex-direction: column;
+            }
+            .send-btn {
+                justify-content: center;
+            }
+            .cta-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
     <section id="download" class="download-section">
         <div class="download-box fade-in">
             <h2>立即下载体验</h2>
-            <div class="version-info">Version 1.0 · Windows 10/11 专用</div>
+            <div class="version-info">Version 2.0 · Windows 10/11 专用 · 新增职业选择+快捷笔记</div>
             <div class="platform-badges">
                 <div class="platform-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.574h9.75v9.451L0 20.676m10.949-9.605H24V24l-12.9-1.801"/></svg>Windows 10/11</div>
                 <div class="platform-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>64-bit 系统</div>
                 <div class="platform-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免费使用</div>
             </div>
-            <a href="https://github.com/betterLola/betterLola.github.io/releases/download/v1.0/GrudgePet_v1.0_Windows.zip" class="download-btn-large" target="_blank">
+            <a href="https://github.com/betterLola/betterLola.github.io/releases/download/v2.0/怨气宠物_v2.0_完整版.zip" class="download-btn-large" target="_blank">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                ⬇️ 下载安装包 (约 40 MB)
+                ⬇️ 下载安装包 (约 51 MB)
             </a>
             <p class="file-info">解压后双击 exe 即可运行 · 无需安装 Python 或任何依赖</p>
             <p class="file-info" style="margin-top:0.8rem;">
@@ -426,6 +772,165 @@
                 document.querySelectorAll('.faq-item.active').forEach(a => a.classList.remove('active'));
                 item.classList.toggle('active', !was);
             });
+        });
+
+        // ========== 在线体验 Demo 逻辑 ==========
+        let demoCount = 0;
+        let currentGrudge = 0;
+
+        // 模拟回复数据库
+        const responseDatabase = [
+            // 加班相关
+            { keywords: ['加班', '深夜', '不让走'], grudge: 45, pet: '😫', color: '#FF9800',
+              responses: ['又加班？老板给你加班费了吗！摸鱼也是为了更好地工作嘛~', '加班到这么晚，身体要紧啊！记得喝杯水休息一下', '今天辛苦了，早点回去吧，别让工作消耗了你的生活'] },
+            // 画饼/老板相关
+            { keywords: ['画饼', '分红', '年底', '老板'], grudge: 55, pet: '😤', color: '#FF5722',
+              responses: ['又听到饼香了吗？这次烤熟了吗？能吃吗？', '老板的饼比月亮还圆，就是吃不饱啊！', '画饼充饥，最后饿的还是你自己，别信！'] },
+            // 甩锅/同事相关
+            { keywords: ['甩锅', '黑锅', '同事'], grudge: 50, pet: '😢', color: '#FF5722',
+              responses: ['这锅不该你背！凭什么让你当替罪羊？', '同事甩锅？太不厚道了！下次留好证据', '背锅侠也是有限度的，这次不背了！'] },
+            // 需求变更相关
+            { keywords: ['需求', '变更', '第三次'], grudge: 65, pet: '🤯', color: '#F44336',
+              responses: ['需求又变了？！这是第几次了？产品经理是认真的吗？', '改需求如流水，程序员心累如山崩', '第三次了还不加钱？这活没法干了！'] },
+            // PUA 相关
+            { keywords: ['PUA', '压榨', '不公平'], grudge: 70, pet: '💢', color: '#E91E63',
+              responses: ['被PUA不是你的错，别怀疑自己的能力！', '这种环境配不上你，你的价值不需要别人定义', '别让烂人烂事消耗你了，不值得！'] },
+            // 默认回复
+            { keywords: [], grudge: 35, pet: '😿', color: '#FFC107',
+              responses: ['我懂你，真的太累了，辛苦了', '抱抱，今天真的不容易', '撑不住就先歇一歇，我在呢', '别给自己太大压力，你已经做得够好了'] }
+        ];
+
+        function analyzeText(text) {
+            text = text.toLowerCase();
+            for (let item of responseDatabase) {
+                if (item.keywords.length === 0) continue;
+                const matchCount = item.keywords.filter(kw => text.includes(kw.toLowerCase())).length;
+                if (matchCount >= Math.min(2, item.keywords.length)) {
+                    return item;
+                }
+            }
+            return responseDatabase[responseDatabase.length - 1]; // 默认
+        }
+
+        function submitDemo(text) {
+            if (!text || !text.trim()) return;
+
+            const input = document.getElementById('demoInput');
+            input.value = '';
+
+            // 显示状态提示
+            showStatus('🔍 正在分析情绪...');
+
+            // 宠物抖动动画
+            const petWrapper = document.getElementById('petWrapper');
+            petWrapper.classList.add('shake');
+
+            // 延迟显示分析结果
+            setTimeout(() => {
+                petWrapper.classList.remove('shake');
+
+                const result = analyzeText(text);
+                updatePet(result);
+                showResponse(result);
+                showStatus('');
+
+                demoCount++;
+                if (demoCount >= 1) {
+                    setTimeout(() => showConversionCTA(), 1500);
+                }
+            }, 400);
+        }
+
+        function submitFromInput() {
+            const input = document.getElementById('demoInput');
+            submitDemo(input.value);
+        }
+
+        function updatePet(result) {
+            // 更新宠物表情
+            const petEmoji = document.getElementById('petEmoji');
+            petEmoji.textContent = result.pet;
+
+            // 更新怨气值（带动画）
+            currentGrudge = Math.min(100, currentGrudge + result.grudge);
+            animateGrudge(currentGrudge);
+
+            // 更新发光效果
+            const petGlow = document.getElementById('petGlow');
+            petGlow.style.background = `radial-gradient(circle, ${result.color}40 0%, transparent 70%)`;
+            petGlow.style.opacity = currentGrudge > 60 ? '0.6' : '0.3';
+
+            // 根据怨气值调整宠物大小
+            const scale = 1 + (currentGrudge / 100) * 0.3;
+            petEmoji.style.transform = `scale(${scale})`;
+        }
+
+        function animateGrudge(targetValue) {
+            const grudgeFill = document.getElementById('grudgeFill');
+            const grudgeValue = document.getElementById('grudgeValue');
+
+            grudgeFill.style.width = `${targetValue}%`;
+
+            // 数字滚动动画
+            let start = parseInt(grudgeValue.textContent) || 0;
+            const duration = 800;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+
+                const currentValue = Math.round(start + (targetValue - start) * easeProgress);
+                grudgeValue.textContent = currentValue;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
+        }
+
+        function showResponse(result) {
+            const bubble = document.getElementById('responseBubble');
+            const textEl = document.getElementById('responseText');
+
+            // 随机选择一个回复
+            const responses = result.responses;
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+            textEl.textContent = randomResponse;
+            bubble.style.display = 'block';
+
+            // 重新触发动画
+            bubble.style.animation = 'none';
+            void bubble.offsetWidth; // 触发重排
+            bubble.style.animation = 'bubbleFadeIn 0.5s ease-out';
+        }
+
+        function showStatus(text) {
+            const hint = document.getElementById('statusHint');
+            hint.textContent = text;
+        }
+
+        function showConversionCTA() {
+            const cta = document.getElementById('conversionCta');
+            cta.style.display = 'block';
+            cta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // 监听 Enter 键发送
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('demoInput');
+            if (textarea) {
+                textarea.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        submitFromInput();
+                    }
+                });
+            }
         });
     </script>
 </body>
